@@ -1,0 +1,27 @@
+{
+  "name": "cs312-miniproject3",
+  "version": "1.0.0",
+  "description": "The objective of this mini-project is to enhance the basic blog web application that you created using Node.js, Express.js, and EJS as part of the Mini-Project-1. The app will enable users to create, view, edit, and delete blog posts.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mch239/CS312-MiniProject3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mch239/CS312-MiniProject3/issues"
+  },
+  "homepage": "https://github.com/mch239/CS312-MiniProject3#readme",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
+  }
+}
