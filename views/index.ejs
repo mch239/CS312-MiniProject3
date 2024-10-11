@@ -17,7 +17,7 @@
       <% } %>
 
       <form
-        action="<%= locals.isEdit ? `/edit/${locals.blogDetails?.id}` : '/home' %>"
+        action="<%= locals.isEdit ? `/edit/${locals.blogDetails?.id}` : '/' %>"
         method="post"
       >
         <label for="bTitle">What would you like your TITLE to be?</label>

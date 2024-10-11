@@ -1,0 +1,5 @@
+I have the server connected, but I have to recode the index.js file so the paths are correct. 
+When I submit a blog, the message says "CANNOT POST" or CANNOT GET" 
+
+Currently using MINIPROJECT1 and Permalist as reference, since the Blog API project from the 
+course uses an API. 

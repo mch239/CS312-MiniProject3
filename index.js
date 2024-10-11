@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg"; 
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = 3000;
@@ -16,10 +18,18 @@ const db = new pg.Client({
 
 db.connect();
 
+//Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+//Path definition
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const indexPath = join(__dirname, "index.ejs");
+const homePath = join(__dirname, "views/home.ejs");
+const blogDetailsPath = join(__dirname, "views/blogDetails.ejs");
+
 let blogs = [];
+
 
 app.get("/", async (req, res) => {
   try {
@@ -45,6 +55,7 @@ app.post("/add", async (req, res) => {
     console.log(err);
   }
 });
+
 
 app.post("/edit", async (req, res) => {
   const blogs = req.body.updatedblogsTitle;
