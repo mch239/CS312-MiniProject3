@@ -18,24 +18,55 @@ db.connect();
 
 //middleware
 app.use(express.static("public"));
-
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
 
-//Come back to change 'today'
-app.get("/", (req, res) => {
-    res.render("index.ejs", {
-        listTitle: "Today",
-        listItems: items,   
+//Following Permalist Project's lead on putting default Blog titles and number. 
+let blogsList = [
+    { id: 1, title: "October Scare" },
+    { id: 2, title: "Ready for Halloween" },
+];
+
+app.get("/", async (req, res) => {
+    try {
+        const result = await db.query("SELECT * from blogs ORDER BY id ASC");
+        blogs = result.rows;
+        
+        res.render("index.ejs", {
+            blogsTitle: "Today",
+            blogsList: blogs, 
+        });
+    }   catch (err) {
+            console.log(err);
+    }
+});
+
+app.post("/home", (req, res) => {
+    const blogsTitle = req.body.blogsTitle;
+    const blogsText = req.body.blogsText;
+    blogsList.push({
+        id: generateID(),
+        title: blogsTitle,
+        description: blogsText,
+    });
+    res.render(homePath, {
+        blogsList: blogsList,
     });
 });
 
-//Adding new blog entry
-app.post("/add", (req, res) => {
-    const item = req.body.newItem;
-    items.push({ title: item });
-    res.redirect("/");
+//Updating  blog entry
+app.post("/edit", async (req, res) => {
+    const blogsTitle = req.body.updatedblogsTitle;
+    const blogsid = req.body.updatedblogsId;
+
+    try {
+        await db.query("UPDATE blogs SET title = ($1) WHERE id = $2", [item, id]);
+        res.redirect("/");
+    }   catch (err) {
+        console.log(err);
+    }
 });
+
+    
 
 
 
