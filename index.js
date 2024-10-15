@@ -1,84 +1,107 @@
 import express from "express";
 import bodyParser from "body-parser";
-import pg from "pg"; 
+import pg from "pg";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 const app = express();
 const port = 3000;
 
-//Linking to SQL database
+
+
+//Connect to BlogDB database
 const db = new pg.Client({
     user: "postgres",
     host: "localhost",
-    database: "BlogDB",
+    database: "blogdb",
     password: "mopassword",
     port: 5432,
 });
-
 db.connect();
 
-//Middleware
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-//Path definition
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const indexPath = join(__dirname, "index.ejs");
-const homePath = join(__dirname, "views/home.ejs");
-const blogDetailsPath = join(__dirname, "views/blogDetails.ejs");
 
-let blogs = [];
+let blogList = [];
 
-
-app.get("/", async (req, res) => {
-  try {
-    const result = await db.query("SELECT * FROM blogs ORDER BY id ASC");
-    blogs = result.rows;
-
-    res.render("index.ejs", {
-      listTitle: "Today",
-      listBlogs: blogs,
-    });
-  } catch (err) {
-    console.log(err);
-  }
+//Page get routes
+//Home Page
+app.get("/", (req, res) => {
+    res.render("home.ejs");
 });
 
-app.post("/add", async (req, res) => {
-  const item = req.body.newItem;
-  // blogs.push({title: item});
-  try {
-    await db.query("INSERT INTO blogs (title) VALUES ($1)", [blog]);
-    res.redirect("/");
-  } catch (err) {
-    console.log(err);
-  }
+//Login Page after clicking login button
+app.get("/login", (req, res) => {
+    res.render("login.ejs");
+});
+
+//Register Page after clicing register button
+app.get("/register", (req, res) => {
+    res.render("register.ejs");
+});
+
+app.get("/home", (req, res) => {
+    res.render("blog.ejs");
 });
 
 
-app.post("/edit", async (req, res) => {
-  const blogs = req.body.updatedblogsTitle;
-  const id = req.body.updatedItemId;
+//Page post routes
+//using name here instead of email because did not include 'email' in DB
+app.post("/register", async (req, res) => {
+    const name = req.body.name;
+    const username = req.body.username;
+    const password = req.body.password;
+    console.log(username);
+    console.log(password);
 
-  try {
-    await db.query("UPDATE blogs SET title = ($1) WHERE id = $2", [item, id]);
-    res.redirect("/");
-  } catch (err) {
-    console.log(err);
-  }
+    try {
+        const checkResult = await db.query("SELECT * FROM users WHERE username = $1", [
+            username,
+        ]);
+    if (checkResult.rows.lenght > 0) {
+        res.send("Registered username already exists. Try logging in.");
+    } else {
+        //If not already registered, insert credentials into DB
+    const result = await db.query("INSERT INTO users (username, password, name) VALUES ($1, $2, $3)",
+        [username, password, name]
+    );
+    console.log(result);
+    res.render("blog.ejs");
+    }
+    } catch(err) {
+        console.log(err);
+    }
 });
 
-app.post("/delete", async (req, res) => {
-  const id = req.body.deleteblogId;
-  try {
-    await db.query("DELETE FROM blogs WHERE id = $1", [id]);
-    res.redirect("/");
-  } catch (err) {
-    console.log(err);
-  }
+app.post("/login", async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+        try{
+            const result = await db.query("SELECT * FROM users WHERE username = $1", [
+                username,
+            ]);
+            if (result.rows.length > 0) {
+                const user = result.rows[0];
+                const storedPassword = user.password;
+
+                if (password === storedPassword) {
+                    res.render("blog.ejs");
+                } else {
+                    res.send("Incorrect Password");  
+                }
+            } else {
+                res.send("User not found");
+            }
+        } catch(err) {
+            console.log(err);
+        }
 });
+
+
+
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });

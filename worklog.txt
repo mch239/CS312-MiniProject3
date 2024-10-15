@@ -1,0 +1,8 @@
+So, I started over from the beginning. Following the instructor's guidance of 
+starting with the authentication page. May be turning this in late but I am going
+to try my best. 
+
+@2pm, have the server running. 
+@3pm, have the register button working and credentials showing up in PGadmin DB table.
+    - have the blog homepage from MP1 showing up after registering new user. 
+@4pm, found the syntax error for the login on index.js. Whoops. No errors on console.log
