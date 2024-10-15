@@ -1,12 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+
 
 const app = express();
 const port = 3000;
-
 
 
 //Connect to BlogDB database
@@ -37,7 +35,7 @@ app.get("/login", (req, res) => {
     res.render("login.ejs");
 });
 
-//Register Page after clicing register button
+//Register Page after clickng register button
 app.get("/register", (req, res) => {
     res.render("register.ejs");
 });
@@ -45,6 +43,11 @@ app.get("/register", (req, res) => {
 app.get("/home", (req, res) => {
     res.render("blog.ejs");
 });
+
+app.get("/blogDetails", (req, res) => {
+    res.render("blogDetails.ejs");
+});
+
 
 
 //Page post routes
@@ -57,7 +60,7 @@ app.post("/register", async (req, res) => {
     console.log(password);
 
     try {
-        const checkResult = await db.query("SELECT * FROM users WHERE username = $1", [
+        const checkResult = await db.query("SELECT * FROM users WHERE username = ($1)", [
             username,
         ]);
     if (checkResult.rows.lenght > 0) {
@@ -79,7 +82,7 @@ app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
         try{
-            const result = await db.query("SELECT * FROM users WHERE username = $1", [
+            const result = await db.query("SELECT * FROM users WHERE username = ($1)", [
                 username,
             ]);
             if (result.rows.length > 0) {
@@ -99,8 +102,21 @@ app.post("/login", async (req, res) => {
         }
 });
 
+app.post("/home", async (req, res) => {
+    const blogTitle = req.body.blogTitle;
+    const blogDescription = req.body.blogDes;
+    blogList.push({
+      title: blogTitle,
+      description: blogDescription, 
+    });
+    res.render(homePath, {
+      blogList: blogList,
+    });
+    });
 
 
+app.post("/blogDetails", async (req, res) => {}
+    );
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
